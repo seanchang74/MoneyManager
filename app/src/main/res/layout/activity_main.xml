@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C5E1A5"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="40dp"
+        app:srcCompat="@drawable/ic_launcher"
+        app:shapeAppearanceOverlay="@style/circular"/>
+
+    <EditText
+        android:id="@+id/account_input"
+        android:layout_below="@+id/logo"
+        android:layout_width="@dimen/edittext_width"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:ems="10"
+        android:hint="@string/Email_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:inputType="textEmailAddress"
+        android:padding="@dimen/edittext_padding" />
+
+    <EditText
+        android:ems="10"
+        android:id="@+id/password_input"
+        android:layout_below="@+id/account_input"
+        android:layout_alignLeft="@id/account_input"
+        android:layout_marginTop="@dimen/relative_layout_margin_top"
+        android:layout_width="@dimen/edittext_width"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:hint="@string/Password_text"
+        android:inputType="textPassword"
+        android:padding="@dimen/edittext_padding" />
+
+    <Button
+        android:id="@+id/sign_in_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/relative_layout_margin_top"
+        android:background="@drawable/shape"
+        android:backgroundTint="#a38a83"
+        android:onClick="signInWithEmailAndPassword"
+        android:text="Sign In"
+        android:textColor="#FFFFFF" />
+
+</RelativeLayout>
