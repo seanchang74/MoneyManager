@@ -6,33 +6,25 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.moneymanager.Edit_New_Cost;
-import com.example.moneymanager.MainPage;
+import com.example.moneymanager.MainActivity;
 import com.example.moneymanager.Model.Expense;
 import com.example.moneymanager.Model.MyDBHelper;
-import com.example.moneymanager.New_Cost;
 import com.example.moneymanager.R;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ExpenseFragment extends Fragment {
     static final String tb_name = "MoneyTable";
@@ -144,7 +136,7 @@ public class ExpenseFragment extends Fragment {
                                 MyDBHelper db = new MyDBHelper(getContext());
                                 String status = db.deleteExpense(id);
                                 if(status == "success"){
-                                    Intent refresh = new Intent(getActivity(),MainPage.class);
+                                    Intent refresh = new Intent(getActivity(), MainActivity.class);
                                     startActivity(refresh);
                                 }
                             }

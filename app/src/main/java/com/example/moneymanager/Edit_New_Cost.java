@@ -3,9 +3,12 @@ package com.example.moneymanager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -58,6 +61,21 @@ public class Edit_New_Cost extends AppCompatActivity implements  View.OnClickLis
         }
     }
 
+    //修改觸控監聽方法
+    @Override
+    public boolean onTouchEvent(MotionEvent e){
+        if(e.getAction() == MotionEvent.ACTION_DOWN){
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                //如果有開啟虛擬鍵盤則關閉
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
         mcal.set(year,monthOfYear,dayOfMonth);
@@ -84,7 +102,7 @@ public class Edit_New_Cost extends AppCompatActivity implements  View.OnClickLis
                         editNum.getText().toString().trim(),
                         editMemo.getText().toString().trim());
                 if(status == "success") {
-                    Intent back = new Intent(Edit_New_Cost.this,MainPage.class);
+                    Intent back = new Intent(Edit_New_Cost.this,MainActivity.class);
                     startActivity(back);
                     finish();
                 }

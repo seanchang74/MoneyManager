@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,7 +35,7 @@ public class New_Cost extends AppCompatActivity implements  View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_new_costs);
 
-        //TODO 使用tablayout區分開收入與支出的資料
+        //TODO 使用floatingButton Menu區分開收入與支出的資料
         num = this.findViewById(R.id.num_input);
         memo = this.findViewById(R.id.explain_input);
         sendfab = this.findViewById(R.id.send_fab);
@@ -46,15 +48,20 @@ public class New_Cost extends AppCompatActivity implements  View.OnClickListener
 
     }
 
-//    @Override
-//    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//
-//    }
-//
-//    @Override
-//    public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//    }
+    //修改觸控監聽方法
+    @Override
+    public boolean onTouchEvent(MotionEvent e){
+        if(e.getAction() == MotionEvent.ACTION_DOWN){
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                //如果有開啟虛擬鍵盤則關閉
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void onClick(View view) {
@@ -75,7 +82,7 @@ public class New_Cost extends AppCompatActivity implements  View.OnClickListener
                               num.getText().toString().trim(),
                               memo.getText().toString().trim());
                 if(status == "success") {
-                    Intent back = new Intent(New_Cost.this,MainPage.class);
+                    Intent back = new Intent(New_Cost.this,MainActivity.class);
                     startActivity(back);
                     finish();
                 }

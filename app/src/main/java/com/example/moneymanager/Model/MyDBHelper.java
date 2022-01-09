@@ -45,7 +45,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     public String addExpense(String type, String date, String num, String memo) {
         //檢查輸入的資料是否為空
-        if(type.length() == 0 || date == "選擇日期" || num.length() == 0){
+        if(type.length() == 0 || !date.contains("/") || num.length() == 0){
             Toast.makeText(context,"除了備註之外所有欄位皆須填寫",Toast.LENGTH_SHORT).show();
             return "failed";
         }

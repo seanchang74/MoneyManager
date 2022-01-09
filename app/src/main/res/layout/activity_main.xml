@@ -1,59 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C5E1A5"
+    android:background="#FFFFFF"
+    android:id="@+id/main_layout"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:padding="40dp"
-        app:srcCompat="@drawable/ic_launcher"
-        app:shapeAppearanceOverlay="@style/circular"/>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/plus_fab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/account_input"
-        android:layout_below="@+id/logo"
-        android:layout_width="@dimen/edittext_width"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape"
-        android:ems="10"
-        android:hint="@string/Email_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:inputType="textEmailAddress"
-        android:padding="@dimen/edittext_padding" />
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/main_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <EditText
-        android:ems="10"
-        android:id="@+id/password_input"
-        android:layout_below="@+id/account_input"
-        android:layout_alignLeft="@id/account_input"
-        android:layout_marginTop="@dimen/relative_layout_margin_top"
-        android:layout_width="@dimen/edittext_width"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape"
-        android:hint="@string/Password_text"
-        android:inputType="textPassword"
-        android:padding="@dimen/edittext_padding" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/main_tablayout"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:tabGravity="fill"
+                app:tabMode="fixed" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <Button
-        android:id="@+id/sign_in_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/password_input"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/relative_layout_margin_top"
-        android:background="@drawable/shape"
-        android:backgroundTint="#a38a83"
-        android:onClick="signInWithEmailAndPassword"
-        android:text="Sign In"
-        android:textColor="#FFFFFF" />
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" /> <!--設定fragment內容與tablayout的距離-->
 
-</RelativeLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_record_fab"
+            android:layout_width="@dimen/fab_layout_size"
+            android:layout_height="@dimen/fab_layout_size"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:scaleType="center"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="#FFFFFF"
+            app:backgroundTint="#64B5F6"
+            app:fabCustomSize="@dimen/fab_layout_size"
+            app:maxImageSize="@dimen/max_image_size"
+            tools:layout_editor_absoluteX="340dp"
+            tools:layout_editor_absoluteY="659dp" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
