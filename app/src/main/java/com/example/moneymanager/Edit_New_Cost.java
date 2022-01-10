@@ -23,9 +23,8 @@ public class Edit_New_Cost extends AppCompatActivity implements  View.OnClickLis
     int id;
     Calendar mcal;
     MyDBHelper db;
-    TextView editDate;
+    TextView editDate, flowtype;
     EditText editNum, editMemo;
-    Spinner expensetype;
     String type, date, num, memo;
     FloatingActionButton updatefab;
 
@@ -44,21 +43,15 @@ public class Edit_New_Cost extends AppCompatActivity implements  View.OnClickLis
         editMemo = this.findViewById(R.id.explain_input);
         editDate = this.findViewById(R.id.datepicker);
         editDate.setOnClickListener(this);
-        expensetype = this.findViewById(R.id.moneyflow_spinner);
+        flowtype = this.findViewById(R.id.flow_type_txv);
         updatefab = this.findViewById(R.id.update_fab);
         updatefab.setOnClickListener(this);
 
+        //類型不可以修改
+        flowtype.setText(type);
         editDate.setText(date);
         editNum.setText(num);
         editMemo.setText(memo);
-        switch(type){ //TODO 存入DB時或者寫法有問題，寫法不能顯示支出選項
-            case "收入":
-                expensetype.setSelection(0);
-            case "支出":
-                expensetype.setSelection(1);
-            default:
-                expensetype.setSelection(0);
-        }
     }
 
     //修改觸控監聽方法
@@ -97,7 +90,7 @@ public class Edit_New_Cost extends AppCompatActivity implements  View.OnClickLis
                 //將資料寫入DB
                 db = new MyDBHelper(Edit_New_Cost.this);
                 String status = db.updateExpense(id,
-                        expensetype.getSelectedItem().toString().trim(),
+                        flowtype.getText().toString().trim(),
                         editDate.getText().toString().trim(),
                         editNum.getText().toString().trim(),
                         editMemo.getText().toString().trim());

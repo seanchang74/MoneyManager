@@ -1,44 +1,38 @@
 package com.example.moneymanager;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.DatePicker;
+import android.widget.TextView;
 
 import com.example.moneymanager.Model.MyDBHelper;
 import com.example.moneymanager.View.ExpenseFragment;
 import com.example.moneymanager.View.FragmentAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import static android.content.ContentValues.TAG;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private MyDBHelper dbHelper;
     private SQLiteDatabase database;
+    private boolean isOpen = false;
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private FloatingActionButton fab;
+    private Animation fabclose, fabopen, rotateforward, rotatebackward;
+    private FloatingActionButton fab, fab1, fab2;
     private ArrayList<Fragment> pageList;
 
     @Override
@@ -60,14 +54,59 @@ public class MainActivity extends AppCompatActivity {
     private void processViews() {
         //設置FloatingActionButton
         fab = this.findViewById(R.id.add_record_fab);
+        fab1 = this.findViewById(R.id.inflow_fab);
+        fab2 = this.findViewById(R.id.outflow_fab);
+        //設置點擊動畫
+        fabopen = AnimationUtils.loadAnimation(this,R.anim.fab_open);
+        fabclose = AnimationUtils.loadAnimation(this,R.anim.fab_close);
+        rotateforward = AnimationUtils.loadAnimation(this,R.anim.rotate_forward);
+        rotatebackward = AnimationUtils.loadAnimation(this,R.anim.rotate_backward);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent add_data = new Intent(MainActivity.this,New_Cost.class);
-                startActivity(add_data);
+                animateFab();
+            }
+        });
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                animateFab();
+                Intent input_inflow = new Intent(MainActivity.this,New_Cost.class);
+                input_inflow.putExtra("Flow_type","inflow");
+                startActivity(input_inflow);
                 finish();
             }
         });
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                animateFab();
+                Intent input_outflow = new Intent(MainActivity.this,New_Cost.class);
+                input_outflow.putExtra("Flow_type","outflow");
+                startActivity(input_outflow);
+                finish();
+            }
+        });
+    }
+
+    private void animateFab(){
+        if(isOpen){
+            fab.startAnimation(rotatebackward);
+            fab1.startAnimation(fabclose);
+            fab2.startAnimation(fabclose);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            isOpen=false;
+        }
+        else{
+            fab.startAnimation(rotateforward);
+            fab1.startAnimation(fabopen);
+            fab2.startAnimation(fabopen);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            isOpen=true;
+        }
     }
 
     private void configViewPager() {
@@ -75,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         titles.add("記帳紀錄");
         titles.add("統計圖表");
         titles.add("個人頁面");
-
 
         pageList = new ArrayList<>();
         //新增DailyView

@@ -1,19 +1,4 @@
 <resources>
     <string name="app_name">Money Manager</string>
-    <string name="Email_text">Email</string>
-    <string name="Password_text">Password</string>
-    <string name="title_activity_main_page">MainActivity</string>
-
-    <string name="navigation_drawer_open">Open</string>
-    <string name="navigation_drawer_close">Close</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Record</string>
-    <string name="title_notifications">Info</string>
-
-    <string name="nav_header_title">Money Manager</string>
-    <string-array name="money_flow_type">
-        <item>收入</item>
-        <item>支出</item>
-    </string-array>
 
 </resources>

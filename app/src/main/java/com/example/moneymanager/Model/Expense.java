@@ -14,6 +14,8 @@ public class Expense {
         this.memo = memo;
     }
 
+    public String getType() { return type; }
+
     public String getDate() {
         return date;
     }
