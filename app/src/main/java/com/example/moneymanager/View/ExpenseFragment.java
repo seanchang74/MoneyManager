@@ -4,8 +4,10 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,11 +20,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moneymanager.Edit_New_Cost;
 import com.example.moneymanager.MainActivity;
@@ -33,7 +35,6 @@ import com.example.moneymanager.R;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class ExpenseFragment extends Fragment implements TextWatcher {
     static final String tb_name = "MoneyTable";
@@ -41,6 +42,7 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
     private Expense_Adapter expense_adapter;
     private SQLiteDatabase db;
 
+    private Integer initID;
     private View view;
     private Cursor cur;
     private Calendar mcal;
@@ -90,12 +92,20 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
         MyDBHelper dbHelper = new MyDBHelper(getActivity());
         db = dbHelper.getWritableDatabase();
         cur = db.rawQuery("SELECT * FROM "+tb_name,null);
+        //TODO 要取出第一筆資料的ID，後面用相對位址推算ID
         if (cur.getCount() != 0) {
+            int i=0;
+            Log.d("Data count",String.valueOf(cur.getCount()));
             while (cur.moveToNext()) {
+                if(i==0){
+                    initID = cur.getInt(0);
+                    i = i+1;
+                }
+                Log.wtf("Date",cur.getString(2));
                 //篩選符合日期的資料
                 if(cur.getString(2).equals(selectdate.getText().toString())){
                     //第0筆資料是索引值
-                    Expense expensemodel = new Expense(cur.getString(1),cur.getString(2),cur.getString(3),cur.getString(4));
+                    Expense expensemodel = new Expense(cur.getInt(0),cur.getString(1),cur.getString(2),cur.getString(3),cur.getString(4));
                     expenseList.add(expensemodel);
                 }
             }
@@ -107,7 +117,7 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
             no_data_txv.setVisibility(View.VISIBLE);
         }
 
-        expense_adapter = new Expense_Adapter(expenseList);
+        expense_adapter = new Expense_Adapter(expenseList,initID);
         recyclerView.setAdapter(expense_adapter);
         return view;
     }
@@ -130,11 +140,18 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
         db = dbHelper.getWritableDatabase();
         cur = db.rawQuery("SELECT * FROM "+tb_name,null);
         if (cur.getCount() != 0) {
+            int i = 0;
+            Log.d("Data count",String.valueOf(cur.getCount()));
             while (cur.moveToNext()) {
+                if(i==0){
+                    initID = cur.getInt(0);
+                    i = i+1;
+                }
+                Log.wtf("Date",cur.getString(2));
                 //篩選符合日期的資料
                 if(cur.getString(2).equals(selectdate.getText().toString())){
                     //第0筆資料是索引值
-                    Expense expensemodel = new Expense(cur.getString(1),cur.getString(2),cur.getString(3),cur.getString(4));
+                    Expense expensemodel = new Expense(cur.getInt(0),cur.getString(1),cur.getString(2),cur.getString(3),cur.getString(4));
                     expenseList.add(expensemodel);
                 }
             }
@@ -151,14 +168,16 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
     }
 
     public class Expense_Adapter extends RecyclerView.Adapter<Expense_Adapter.ViewHolder> {
-        private Context context;
+        private Integer initID;
         private ArrayList<Expense> expenseList; //拆成多個ArrayList創建Recyclerview
 
         public class ViewHolder extends RecyclerView.ViewHolder {
+            CardView data_card;
             TextView expense_type_txv, expense_num_txv, expense_memo_txv;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
+                data_card = itemView.findViewById(R.id.Data_card);
                 expense_type_txv = itemView.findViewById(R.id.show_type_txv);
                 expense_num_txv = itemView.findViewById(R.id.show_num_txv);
                 expense_memo_txv = itemView.findViewById(R.id.show_memo_txv);
@@ -167,7 +186,11 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        cur.moveToPosition(getAdapterPosition());
+                        //使用initID定位刪除資料的相對ID
+                        Expense expense = getExpenseList().get(getAdapterPosition());
+                        Log.wtf("Current ID",String.valueOf(expense.getId()-initID));
+                        cur.moveToPosition(expense.getId()-initID);
+
                         String type = cur.getString(1);
                         String date = cur.getString(2);
                         String num = cur.getString(3);
@@ -186,8 +209,10 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        //取出DB資料顯示
-                        cur.moveToPosition(getAdapterPosition());
+                        //使用initID定位刪除資料的相對ID
+                        Expense expense = getExpenseList().get(getAdapterPosition());
+                        Log.wtf("Current ID",String.valueOf(expense.getId()-initID));
+                        cur.moveToPosition(expense.getId()-initID);
                         int id = cur.getInt(0);
                         String type = cur.getString(1);
                         String date = cur.getString(2);
@@ -224,8 +249,13 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
             }
         }
 
-        public Expense_Adapter(ArrayList<Expense> expenseList) {
+        public Expense_Adapter(ArrayList<Expense> expenseList, Integer initID) {
+            this.initID = initID;
             this.expenseList = expenseList;
+        }
+
+        public ArrayList<Expense> getExpenseList() {
+            return expenseList;
         }
 
         @NonNull
@@ -239,11 +269,18 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            String type[] = new String[] {"飲食", "交通", "娛樂", "醫療", "社交"};
+            holder.data_card.setCardBackgroundColor(Color.parseColor("#FFCCBC"));
+            //收入與支出以不同顏色區分
+            for(int i=0;i<type.length;i++){
+                if(expenseList.get(position).getType().equals(type[i])){
+                    holder.data_card.setCardBackgroundColor(Color.parseColor("#88b1f2"));
+                    break;
+                }
+            }
             holder.expense_type_txv.setText(expenseList.get(position).getType());
             holder.expense_num_txv.setText(expenseList.get(position).getNum());
             holder.expense_memo_txv.setText(expenseList.get(position).getMemo());
-
-            //TODO 收入與支出的資料分別以不同顏色顯示於畫面上
         }
 
         @Override

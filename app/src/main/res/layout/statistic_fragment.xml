@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".View.StatisticFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/choose_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="選擇日期"
+            android:textSize="30dp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/inflow_card"
+            android:layout_below="@+id/choose_date"
+            android:layout_width="match_parent"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="10sp"
+            android:background="?attr/selectableItemBackground"
+            app:cardBackgroundColor="#FFCCBC"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2sp"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="10sp"
+                    android:text="收入"
+                    android:gravity="center_vertical|left"
+                    android:textSize="36sp" />
+
+                <TextView
+                    android:id="@+id/show_inflow_txv"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:text="0"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10sp"
+                    android:textColor="#000000"
+                    android:gravity="center_vertical|right"
+                    android:padding="10sp"
+                    android:textSize="36sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/outflow_card"
+            android:layout_below="@+id/inflow_card"
+            android:layout_width="match_parent"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10sp"
+            android:background="?attr/selectableItemBackground"
+            app:cardBackgroundColor="#88b1f2"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2sp"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="10sp"
+                    android:text="支出"
+                    android:gravity="center_vertical|left"
+                    android:textSize="36sp" />
+
+                <TextView
+                    android:id="@+id/show_outflow_txv"
+                    android:text="0"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10sp"
+                    android:textColor="#000000"
+                    android:gravity="center_vertical|right"
+                    android:padding="10sp"
+                    android:textSize="36sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/no_matching_txv"
+            android:layout_below="@+id/outflow_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="80dp"
+            android:gravity="center_horizontal"
+            android:text="目前尚未有符合條件的資料"
+            android:textColor="#000000"
+            android:textSize="40dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pie_chart"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_below="@+id/outflow_card"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp" />
+
+    </RelativeLayout>
+</FrameLayout>

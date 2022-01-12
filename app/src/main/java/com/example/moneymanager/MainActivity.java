@@ -4,24 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.DatePicker;
-import android.widget.TextView;
 
 import com.example.moneymanager.Model.MyDBHelper;
 import com.example.moneymanager.View.ExpenseFragment;
 import com.example.moneymanager.View.FragmentAdapter;
+import com.example.moneymanager.View.PersonalFragment;
+import com.example.moneymanager.View.StatisticFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 animateFab();
                 Intent input_inflow = new Intent(MainActivity.this,New_Cost.class);
+                //傳遞Flow_type資料去改變New_Cost頁面的spinner選項
                 input_inflow.putExtra("Flow_type","inflow");
                 startActivity(input_inflow);
                 finish();
@@ -83,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 animateFab();
                 Intent input_outflow = new Intent(MainActivity.this,New_Cost.class);
+                //傳遞Flow_type資料去改變New_Cost頁面的spinner選項
                 input_outflow.putExtra("Flow_type","outflow");
                 startActivity(input_outflow);
                 finish();
@@ -113,16 +113,15 @@ public class MainActivity extends AppCompatActivity {
         List<String> titles = new ArrayList<>();
         titles.add("記帳紀錄");
         titles.add("統計圖表");
-        titles.add("個人頁面");
+        titles.add("作者資訊");
 
         pageList = new ArrayList<>();
-        //新增DailyView
-        //TODO 傳入時間區間(1d,1w,1m ...)參數，根據區間篩選出符合條件的資料
+        //記帳資料頁面
         pageList.add(new ExpenseFragment());
-        //新增WeeklyView
-        pageList.add(new ExpenseFragment());
-        //新增MonthlyView
-        pageList.add(new ExpenseFragment());
+        //統計資料頁面
+        pageList.add(new StatisticFragment());
+        //個人資訊頁面
+        pageList.add(new PersonalFragment());
 
         viewPager = this.findViewById(R.id.main_viewpager);
         tabLayout = this.findViewById(R.id.main_tablayout);

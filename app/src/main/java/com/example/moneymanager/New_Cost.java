@@ -27,7 +27,7 @@ import java.util.List;
 public class New_Cost extends AppCompatActivity implements  View.OnClickListener, DatePickerDialog.OnDateSetListener {
     Calendar mcal;
     MyDBHelper db;
-    TextView editDate;
+    TextView editDate,hintmsg;
     EditText num, memo;
     Spinner expensetype;
     String inflow[] = new String[] {"薪水","獎金", "投資", "買賣"};
@@ -40,13 +40,16 @@ public class New_Cost extends AppCompatActivity implements  View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_new_costs);
         //選擇不同金流類型更改種類描述的spinner
+        hintmsg = this.findViewById(R.id.hint_msg);
         String type = getIntent().getExtras().getString("Flow_type");
         switch (type){
             case "inflow":
+                hintmsg.setText("收入");
                 adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,inflow);
                 adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                 break;
             case "outflow":
+                hintmsg.setText("支出");
                 adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,outflow);
                 adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                 break;
