@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -92,16 +93,8 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
         MyDBHelper dbHelper = new MyDBHelper(getActivity());
         db = dbHelper.getWritableDatabase();
         cur = db.rawQuery("SELECT * FROM "+tb_name,null);
-        //TODO 要取出第一筆資料的ID，後面用相對位址推算ID
         if (cur.getCount() != 0) {
-            int i=0;
-            Log.d("Data count",String.valueOf(cur.getCount()));
             while (cur.moveToNext()) {
-                if(i==0){
-                    initID = cur.getInt(0);
-                    i = i+1;
-                }
-                Log.wtf("Date",cur.getString(2));
                 //篩選符合日期的資料
                 if(cur.getString(2).equals(selectdate.getText().toString())){
                     //第0筆資料是索引值
@@ -140,14 +133,7 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
         db = dbHelper.getWritableDatabase();
         cur = db.rawQuery("SELECT * FROM "+tb_name,null);
         if (cur.getCount() != 0) {
-            int i = 0;
-            Log.d("Data count",String.valueOf(cur.getCount()));
             while (cur.moveToNext()) {
-                if(i==0){
-                    initID = cur.getInt(0);
-                    i = i+1;
-                }
-                Log.wtf("Date",cur.getString(2));
                 //篩選符合日期的資料
                 if(cur.getString(2).equals(selectdate.getText().toString())){
                     //第0筆資料是索引值
@@ -186,63 +172,73 @@ public class ExpenseFragment extends Fragment implements TextWatcher {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //使用initID定位刪除資料的相對ID
                         Expense expense = getExpenseList().get(getAdapterPosition());
-                        Log.wtf("Current ID",String.valueOf(expense.getId()-initID));
-                        cur.moveToPosition(expense.getId()-initID);
+                        Integer expense_id = expense.getId();
+                        cur = db.rawQuery("SELECT * FROM MoneyTable WHERE _id = '"+expense_id+"'", null);
+                        if(cur.moveToFirst()){
+                            String type = cur.getString(1);
+                            String date = cur.getString(2);
+                            String num = cur.getString(3);
+                            String memo = cur.getString(4);
 
-                        String type = cur.getString(1);
-                        String date = cur.getString(2);
-                        String num = cur.getString(3);
-                        String memo = cur.getString(4);
-
-                        Intent intent = new Intent(getActivity(), Edit_New_Cost.class);
-                        intent.putExtra("id", cur.getInt(0));
-                        intent.putExtra("type", type);
-                        intent.putExtra("date", date);
-                        intent.putExtra("num", num);
-                        intent.putExtra("memo", memo);
-                        startActivity(intent);
+                            Intent intent = new Intent(getActivity(), Edit_New_Cost.class);
+                            intent.putExtra("id", cur.getInt(0));
+                            intent.putExtra("type", type);
+                            intent.putExtra("date", date);
+                            intent.putExtra("num", num);
+                            intent.putExtra("memo", memo);
+                            startActivity(intent);
+                        }else {
+                            Toast.makeText(getContext(), "發生錯誤", Toast.LENGTH_SHORT).show();
+                            Log.wtf("No data","No matching data");
+                        }
                     }
                 });
                 //長按item時可以刪除資料
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        //使用initID定位刪除資料的相對ID
                         Expense expense = getExpenseList().get(getAdapterPosition());
-                        Log.wtf("Current ID",String.valueOf(expense.getId()-initID));
-                        cur.moveToPosition(expense.getId()-initID);
-                        int id = cur.getInt(0);
-                        String type = cur.getString(1);
-                        String date = cur.getString(2);
-                        String num = cur.getString(3);
-                        String memo = cur.getString(4);
+                        Integer expense_id = expense.getId();
+                        cur = db.rawQuery("SELECT * FROM MoneyTable WHERE _id = '"+expense_id+"'", null);
 
-                        //刪除提示訊息
-                        AlertDialog.Builder delete_dialog = new AlertDialog.Builder(getActivity());
-                        delete_dialog.setTitle("刪除確認");
-                        String alert_message =
-                                "你確定要刪除以下這筆資料嗎?\n"+
-                                "種類: "+type+"\n"+
-                                "日期: "+date+"\n"+
-                                "金額: "+num+"\n"+
-                                "備註: "+memo;
-                        delete_dialog.setMessage(alert_message);
-                        delete_dialog.setCancelable(true);
-                        delete_dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //執行資料刪除的動作
-                                MyDBHelper db = new MyDBHelper(getContext());
-                                String status = db.deleteExpense(id);
-                                if(status == "success"){
-                                    Intent refresh = new Intent(getActivity(), MainActivity.class);
-                                    startActivity(refresh);
+                        if(cur.moveToFirst()) {
+                            int id = cur.getInt(0);
+                            String type = cur.getString(1);
+                            String date = cur.getString(2);
+                            String num = cur.getString(3);
+                            String memo = cur.getString(4);
+
+                            //刪除提示訊息
+                            AlertDialog.Builder delete_dialog = new AlertDialog.Builder(getActivity());
+                            delete_dialog.setTitle("刪除確認");
+                            String alert_message =
+                                    "你確定要刪除以下這筆資料嗎?\n" +
+                                            "種類: " + type + "\n" +
+                                            "日期: " + date + "\n" +
+                                            "金額: " + num + "\n" +
+                                            "備註: " + memo;
+                            delete_dialog.setMessage(alert_message);
+                            delete_dialog.setCancelable(true);
+                            delete_dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    expenseList.remove(getAdapterPosition());
+                                    expense_adapter.notifyItemRemoved(getAdapterPosition());
+                                    //執行資料刪除的動作
+                                    MyDBHelper db = new MyDBHelper(getContext());
+                                    String status = db.deleteExpense(id);
+                                    if (status == "success") {
+                                        Intent refresh = new Intent(getActivity(), MainActivity.class);
+                                        startActivity(refresh);
+                                    }
                                 }
-                            }
-                        });
-                        delete_dialog.show();
+                            });
+                            delete_dialog.show();
+                        }else{
+                            Toast.makeText(getContext(), "發生錯誤", Toast.LENGTH_SHORT).show();
+                            Log.wtf("No data","No matching data");
+                        }
                         return true;
                     }
                 });
