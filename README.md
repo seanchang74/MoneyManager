@@ -49,5 +49,3 @@ Please Click [Here](https://drive.google.com/file/d/1KKSfDscfoB6HN96ZA2PqexzbckM
 - layout -> layout file
 - mipmap -> customize icon image 
 - values -> parameter values
-
-###### tags: `GitHub Readme`
